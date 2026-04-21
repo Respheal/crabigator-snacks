@@ -14,6 +14,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { mutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import * as wanakana from "wanakana";
 import { Toaster, toaster } from "./components/ui/toaster";
 import type { GradedReview, Subject, SubjectGrade } from "./interfaces";
 
@@ -303,7 +304,10 @@ export function SubjectCard({
               <Field.Label>Reading</Field.Label>
               <Input
                 value={readingAnswer}
-                onChange={(e) => setReadingAnswer(e.target.value)}
+                onChange={(e) => {
+                  const romaji = wanakana.toKana(e.target.value, { IMEMode: true });
+                  setReadingAnswer(romaji);
+                }}
               />
             </Field.Root>
             <Button
