@@ -115,7 +115,7 @@ export function SubjectCard({
         },
       }));
       toaster.create({
-        description: `Incorrect Meaning. Total Incorrect Meanings: ${grades[subject.id]?.incorrect_meaning_answers ?? 0}`,
+        description: `Incorrect Meaning. Total Incorrect Meanings: ${(grades[subject.id]?.incorrect_meaning_answers ?? 0) + 1}`,
         type: "error",
       });
     }
@@ -145,7 +145,7 @@ export function SubjectCard({
         },
       }));
       toaster.create({
-        description: `Incorrect Reading. Total Incorrect Readings: ${grades[subject.id]?.incorrect_reading_answers ?? 0}`,
+        description: `Incorrect Reading. Total Incorrect Readings: ${(grades[subject.id]?.incorrect_reading_answers ?? 0) + 1}`,
         type: "error",
       });
     }
