@@ -23,7 +23,9 @@ import { Flashcards } from "./Flashcards";
 
 export function App() {
   const queryClient = useQueryClient();
-  const [apiKey, setApiKey] = useState(queryClient.getQueryData(["apiKey"]) ?? "");
+  const [apiKey, setApiKey] = useState(
+    queryClient.getQueryData(["apiKey"]) ?? localStorage.getItem("apiKey") ?? "",
+  );
   const [batchSize, setBatchSize] = useState("10"); // how many reviews to fetch
   const [debouncedBatch, setDebouncedBatch] = useState(batchSize); // debouncer for batch size
   const [submitted, setSubmitted] = useState(false); // wait for submit button before fetching data
@@ -88,6 +90,7 @@ export function App() {
     event.preventDefault(); // Prevents page reload
     setApiKey(apiKey); // Update the state with the new API key
     setSubmitted(true); // Mark the API key as submitted
+    localStorage.setItem("apiKey", apiKey);
     queryClient.setQueryData(["apiKey"], apiKey);
   };
 

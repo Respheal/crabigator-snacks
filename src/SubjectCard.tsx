@@ -36,7 +36,8 @@ export function SubjectCard({
   setCompletedSubjects: React.Dispatch<React.SetStateAction<number[]>>;
 }) {
   const queryClient = useQueryClient();
-  const apiKey: string = queryClient.getQueryData(["apiKey"]) ?? "";
+  const apiKey: string =
+    queryClient.getQueryData(["apiKey"]) ?? localStorage.getItem("apiKey") ?? "";
   const [meaningAnswer, setMeaningAnswer] = useState("");
   const [readingAnswer, setReadingAnswer] = useState("");
 
