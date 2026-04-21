@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Text,
@@ -16,6 +15,7 @@ import {
   Heading,
   Kbd,
   Center,
+  Flex,
 } from "@chakra-ui/react";
 import { FaGithub } from "react-icons/fa";
 import {
@@ -123,7 +123,7 @@ export function App() {
   }
 
   return (
-    <AbsoluteCenter>
+    <Flex justifyContent={"center"}>
       <Stack minW={"sm"} padding={4}>
         <Box>
           <form onSubmit={submitAPIKey}>
@@ -218,6 +218,6 @@ export function App() {
           </Center>
         </Box>
       </Stack>
-    </AbsoluteCenter>
+    </Flex>
   );
 }
