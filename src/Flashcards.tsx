@@ -1,36 +1,34 @@
 import { useState } from "react";
-import {
-  Button,
-  Text,
-  Stack,
-  Card,
-  Center,
-  Separator,
-  SimpleGrid,
-} from "@chakra-ui/react";
-import type { Subject } from "./interfaces";
+import { Button, Text, Stack, Card, Separator, SimpleGrid } from "@chakra-ui/react";
+import type { Subject, SubjectGrade } from "./interfaces";
 import { SubjectCard } from "./SubjectCard";
 
 export function Flashcards({ subjects }: { subjects: Subject[] }) {
   const [displayedSubject, setDisplayedSubject] = useState(subjects[0] ?? null);
   const [completedSubjects, setCompletedSubjects] = useState<number[]>([]);
-  const [grades, setGrades] = useState<{
-    [subjectId: number]: {
-      incorrect_meaning_answers: number;
-      incorrect_reading_answers: number;
-      correct_meaning: boolean;
-      correct_reading: boolean;
-    };
-  }>({});
+  const [grades, setGrades] = useState<SubjectGrade>({});
+
+  // Initialize the grade for the displayed subject
+  if (displayedSubject && !grades[displayedSubject.id]) {
+    setGrades((prev) => ({
+      ...prev,
+      [displayedSubject.id]: {
+        incorrect_meaning_answers: 0,
+        incorrect_reading_answers: 0,
+        correct_meaning: false,
+        correct_reading:
+          !displayedSubject.data.readings || displayedSubject.data.readings.length === 0,
+      },
+    }));
+  }
 
   if (subjects.length === 0) {
     return (
-      <Center h="100vh">
-        <Text textStyle="7xl" textAlign={"center"}>
-          ???
-        </Text>
-        <Text textAlign={"center"}>No assignments available</Text>
-      </Center>
+      <Card.Root>
+        <Card.Body>
+          <Text textAlign={"center"}>No assignments available</Text>
+        </Card.Body>
+      </Card.Root>
     );
   }
 

@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
-import { Button, Stack, Input, Field, Center, Flex } from "@chakra-ui/react";
+import {
+  Button,
+  Stack,
+  Input,
+  Field,
+  Flex,
+  Popover,
+  Portal,
+  Text,
+  Accordion,
+  Span,
+  Mark,
+  Heading,
+} from "@chakra-ui/react";
 import { mutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Toaster, toaster } from "./components/ui/toaster";
 import type { GradedReview, Subject, SubjectGrade } from "./interfaces";
@@ -41,26 +54,6 @@ export function SubjectCard({
   const [meaningAnswer, setMeaningAnswer] = useState("");
   const [readingAnswer, setReadingAnswer] = useState("");
 
-  // Initialize the subject grade in state if it doesn't exist
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!grades[subject.id]) {
-        setGrades((prev) => ({
-          ...prev,
-          [subject.id]: {
-            incorrect_meaning_answers: 0,
-            incorrect_reading_answers: 0,
-            correct_meaning: false,
-            // Set readings to correct automatically if there are no readings for the subject
-            correct_reading: !subject.data.readings || subject.data.readings.length === 0,
-          },
-        }));
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const incorrectMeaningCount = grades[subject.id]?.incorrect_meaning_answers ?? 0;
   const incorrectReadingCount = grades[subject.id]?.incorrect_reading_answers ?? 0;
   const [correctReading, setCorrectReading] = useState(
@@ -70,6 +63,104 @@ export function SubjectCard({
   const [correctMeaning, setCorrectMeaning] = useState(
     grades[subject.id]?.correct_meaning ?? false,
   );
+
+  function parseMnemonics(mnemonic: string) {
+    // The mnemonics contain wanikani-specific mark tags.
+    // Replace them with the Chakra UI Mark component for better styling
+    const colorMap: Record<string, string> = {
+      vocabulary: "purple",
+      radical: "blue",
+      kanji: "pink",
+      reading: "gray",
+    };
+    const tagRegex = /<(vocabulary|radical|kanji|reading)>(.*?)<\/\1>/g;
+    const parts = mnemonic.split(tagRegex);
+    return parts.map((part, index) => {
+      // Because the regex has two capturing groups: (tag) and (content), the split
+      // array will follow this pattern: [text, tag, content, text, tag, content...].
+      // Every 3rd element starting from index 1 is a tag name
+      if (index % 3 === 1) {
+        const tagName = part;
+        const content = parts[index + 1];
+        return (
+          <Mark key={index} variant="subtle" colorPalette={colorMap[tagName] || "gray"}>
+            {content}
+          </Mark>
+        );
+      }
+      // Every 3rd element starting from index 2 is the content we already handled
+      if (index % 3 === 2) return null;
+      // Otherwise, it's just plain text
+      return part;
+    });
+  }
+
+  function displayReadingHint(subject: Subject) {
+    if (!subject.data.readings || subject.data.readings.length === 0) {
+      return null;
+    }
+    return (
+      <Accordion.Item value="reading">
+        <Accordion.ItemTrigger>
+          <Span flex="1">Reading</Span>
+          <Accordion.ItemIndicator />
+        </Accordion.ItemTrigger>
+        <Accordion.ItemContent>
+          <Accordion.ItemBody>
+            <Heading>
+              {subject.data.readings[0].reading || "No reading available"}
+            </Heading>
+            <Text>{parseMnemonics(subject.data.reading_mnemonic || "")}</Text>
+          </Accordion.ItemBody>
+        </Accordion.ItemContent>
+      </Accordion.Item>
+    );
+  }
+
+  function displayHint() {
+    if (incorrectMeaningCount >= 1 || incorrectReadingCount >= 1) {
+      let defaultValue = "meaning";
+      const primaryMeaning = subject.data.meanings.find((m) => m.primary);
+
+      if (incorrectReadingCount >= incorrectMeaningCount) {
+        defaultValue = "reading";
+      }
+
+      return (
+        <Popover.Root lazyMount unmountOnExit>
+          <Popover.Trigger asChild>
+            <Button size="sm" variant="outline">
+              Show hint
+            </Button>
+          </Popover.Trigger>
+          <Portal>
+            <Popover.Positioner>
+              <Popover.Content>
+                <Popover.Arrow />
+                <Popover.Body>
+                  <Accordion.Root collapsible defaultValue={[defaultValue]}>
+                    <Accordion.Item value="meaning">
+                      <Accordion.ItemTrigger>
+                        <Span flex="1">Meaning</Span>
+                        <Accordion.ItemIndicator />
+                      </Accordion.ItemTrigger>
+                      <Accordion.ItemContent>
+                        <Accordion.ItemBody>
+                          <Heading>{primaryMeaning?.meaning}</Heading>
+                          <Text>{parseMnemonics(subject.data.meaning_mnemonic)}</Text>
+                        </Accordion.ItemBody>
+                      </Accordion.ItemContent>
+                    </Accordion.Item>
+                    {displayReadingHint(subject)}
+                  </Accordion.Root>
+                </Popover.Body>
+              </Popover.Content>
+            </Popover.Positioner>
+          </Portal>
+        </Popover.Root>
+      );
+    }
+  }
 
   // Initialize the mutation for grading the review
   const mutation = useMutation({
@@ -81,6 +172,20 @@ export function SubjectCard({
       },
       apiKey,
     ),
+    onSuccess: () => {
+      toaster.create({
+        title: `Submitted review for ${subject.data.characters}`,
+        description: `Incorrect Meanings: ${incorrectMeaningCount}, Incorrect Readings: ${incorrectReadingCount}`,
+        type: "info",
+      });
+    },
+    onError: (error) => {
+      toaster.create({
+        title: "Error submitting review",
+        description: (error as Error).message,
+        type: "error",
+      });
+    },
   });
 
   function checkMeaning(e: React.SubmitEvent) {
@@ -151,6 +256,23 @@ export function SubjectCard({
     }
   }
 
+  // If the meaning and reading are both correct, submit the review and mark the subject as completed
+  useEffect(() => {
+    setTimeout(() => {
+      if (correctMeaning && correctReading && !completedSubjects.includes(subject.id)) {
+        mutation.mutate();
+        setCompletedSubjects((prev) => [...prev, subject.id]);
+      }
+    }, 500);
+  }, [
+    correctMeaning,
+    correctReading,
+    completedSubjects,
+    subject,
+    mutation,
+    setCompletedSubjects,
+  ]);
+
   return (
     <>
       <Flex direction={{ base: "column", md: "row" }} gap="{2}" justify="space-around">
@@ -159,6 +281,7 @@ export function SubjectCard({
             <Field.Root disabled={correctMeaning}>
               <Field.Label>Meaning</Field.Label>
               <Input
+                autoFocus
                 value={meaningAnswer}
                 onChange={(e) => setMeaningAnswer(e.target.value)}
               />
@@ -196,25 +319,7 @@ export function SubjectCard({
           </Stack>
         </form>
       </Flex>
-      <Center>
-        <Button
-          type="submit"
-          disabled={
-            !correctMeaning || !correctReading || completedSubjects.includes(subject.id)
-          }
-          onClick={() => {
-            mutation.mutate();
-            toaster.create({
-              title: `Submitting Review for ${subject.data.characters}`,
-              description: `Incorrect Meanings: ${incorrectMeaningCount}, Incorrect Readings: ${incorrectReadingCount}`,
-              type: "info",
-            });
-            setCompletedSubjects((prev) => [...prev, subject.id]);
-          }}
-        >
-          Submit Review
-        </Button>
-      </Center>
+      {displayHint()}
       <Toaster />
     </>
   );
