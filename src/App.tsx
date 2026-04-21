@@ -108,13 +108,15 @@ export function App() {
     if (isBatchLoading) {
       return <Text>Loading subjects...</Text>;
     }
-    if (flashcards.length === 0) {
+    if (submitted && flashcards.length === 0) {
       return <Text>No subjects to display.</Text>;
     }
     if (flashcards.some((subject) => !subject)) {
       return <Text>Error loading some subjects.</Text>;
     }
-    return <Flashcards key={flashcards.length} subjects={flashcards as Subject[]} />;
+    if (flashcards.length > 0) {
+      return <Flashcards key={flashcards.length} subjects={flashcards as Subject[]} />;
+    }
   }
 
   return (
