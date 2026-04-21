@@ -3,9 +3,16 @@ import { Button, Text, Stack, Card, Separator, SimpleGrid } from "@chakra-ui/rea
 import type { Subject, SubjectGrade } from "./interfaces";
 import { SubjectCard } from "./SubjectCard";
 
-export function Flashcards({ subjects }: { subjects: Subject[] }) {
+export function Flashcards({
+  subjects,
+  completedSubjects,
+  setCompletedSubjects,
+}: {
+  subjects: Subject[];
+  completedSubjects: number[];
+  setCompletedSubjects: React.Dispatch<React.SetStateAction<number[]>>;
+}) {
   const [displayedSubject, setDisplayedSubject] = useState(subjects[0] ?? null);
-  const [completedSubjects, setCompletedSubjects] = useState<number[]>([]);
   const [grades, setGrades] = useState<SubjectGrade>({});
 
   // Initialize the grade for the displayed subject

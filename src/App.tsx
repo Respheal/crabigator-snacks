@@ -38,6 +38,7 @@ export function App() {
   const [submitted, setSubmitted] = useState(false); // wait for submit button before fetching data
   const { data: assignments, error } = useQuery(assignmentOptions(apiKey));
   const assignmentBatch = assignments?.data.slice(0, Number(debouncedBatch)) ?? [];
+  const [completedSubjects, setCompletedSubjects] = useState<number[]>([]);
 
   // Wait a sec before updating the batch size
   useEffect(() => {
@@ -47,6 +48,18 @@ export function App() {
 
     return () => clearTimeout(timer);
   }, [batchSize]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // If the user has completed all subjects in the current batch,
+      // we can fetch the next batch
+      if (completedSubjects.length == Number(batchSize)) {
+        setBatchSize((prev) => String(Number(prev) + Number(prev)));
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [completedSubjects, batchSize]);
 
   // Query functions
 
@@ -118,7 +131,14 @@ export function App() {
       return <Text>Error loading some subjects.</Text>;
     }
     if (flashcards.length > 0) {
-      return <Flashcards key={flashcards.length} subjects={flashcards as Subject[]} />;
+      return (
+        <Flashcards
+          key={flashcards.length}
+          subjects={flashcards as Subject[]}
+          completedSubjects={completedSubjects}
+          setCompletedSubjects={setCompletedSubjects}
+        />
+      );
     }
   }
 
