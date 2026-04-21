@@ -1,73 +1,21 @@
-# React + TypeScript + Vite
+# Crabigator Snacks
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This little app is to help me deal with my massive [WaniKani](https://www.wanikani.com/) backlog. The problem with large review queues is that no subject is actually complete until both the meaning (and reading for kanji and vocab) are submitted.
 
-Currently, two official plugins are available:
+Say you have a review queue that is 50 subjects long. The first review question is for the meaning of 上. The 30th review question is for the reading of 上. If you only have time (or [spoons](https://en.wikipedia.org/wiki/Spoon_theory)) for 25 subjects, you will not complete the 上 subject even if you got the meaning right. The next time you load up WaniKani, 上 will be there still, taunting you.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This app breaks large review queues into bite-size chunks that can be completed in a given sitting.
 
-## React Compiler
+# To Use
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The app should be accessible at https://respheal.github.io/crabigator-snacks.
+To use it, generate an [API Key through WaniKani](https://www.wanikani.com/settings/personal_access_tokens) and enter it in the form. The API key needs the `reviews:create` permission to mark subjects as reviewed.
 
-## Expanding the ESLint configuration
+## Notes
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Handy Windows keyboard input note for me:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+shift+alt switch between jpn and eng
+(while in jpn) shift+caps switch between different inputs of jpn
 ```
