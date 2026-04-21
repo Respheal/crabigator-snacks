@@ -10,12 +10,3 @@ This app breaks large review queues into bite-size chunks that can be completed 
 
 The app should be accessible at https://respheal.github.io/crabigator-snacks.
 To use it, generate an [API Key through WaniKani](https://www.wanikani.com/settings/personal_access_tokens) and enter it in the form. The API key needs the `reviews:create` permission to mark subjects as reviewed.
-
-## Notes
-
-Handy Windows keyboard input note for me:
-
-```
-shift+alt switch between jpn and eng
-(while in jpn) shift+caps switch between different inputs of jpn
-```

@@ -76,7 +76,6 @@ export function Flashcards({ subjects }: { subjects: Subject[] }) {
           </SimpleGrid>
         </Stack>
       </Card.Body>
-      <Card.Footer />
     </Card.Root>
   );
 }

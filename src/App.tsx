@@ -10,6 +10,10 @@ import {
   Field,
   Link,
   Code,
+  Card,
+  List,
+  Heading,
+  Kbd,
 } from "@chakra-ui/react";
 import {
   queryOptions,
@@ -160,6 +164,42 @@ export function App() {
           </form>
         </Box>
         {renderFlashcards()}
+        <Card.Root>
+          <Card.Body>
+            <Heading>Installing language packs:</Heading>
+            <Box padding={2}>
+              <List.Root>
+                <List.Item>
+                  <Link
+                    variant="underline"
+                    href="https://support.microsoft.com/en-us/windows/language-packs-for-windows-a5094319-a92d-18de-5b53-1cfc697cfca8#windowsversion=windows_11"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Language packs for Windows
+                  </Link>
+                  <List.Root ps="5">
+                    <List.Item>
+                      To shift languages, <Kbd>Shift</Kbd>+<Kbd>Alt</Kbd> to switch to the
+                      Japanese keyboard, then <Kbd>Shift</Kbd>+<Kbd>Caps</Kbd> to switch
+                      to Hiragana.
+                    </List.Item>
+                  </List.Root>
+                </List.Item>
+                <List.Item>
+                  <Link
+                    variant="underline"
+                    href="https://support.google.com/android/answer/12395118?hl=en"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Change app language on your Android phone
+                  </Link>
+                </List.Item>
+              </List.Root>
+            </Box>
+          </Card.Body>
+        </Card.Root>
       </Stack>
     </AbsoluteCenter>
   );
