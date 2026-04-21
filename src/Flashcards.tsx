@@ -76,7 +76,11 @@ export function Flashcards({
             key={displayedSubject.id}
           />
           <Separator />
-          <SimpleGrid minChildWidth={12} columnGap={2} rowGap={3}>
+          <SimpleGrid
+            columns={{ base: 3, sm: 4, md: 6, lg: 8, xl: 10, "2xl": 12 }}
+            columnGap={2}
+            rowGap={3}
+          >
             {subjectButtons()}
           </SimpleGrid>
         </Stack>
