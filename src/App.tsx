@@ -6,6 +6,7 @@ import {
   Text,
   Stack,
   Input,
+  Icon,
   NumberInput,
   Field,
   Link,
@@ -14,7 +15,9 @@ import {
   List,
   Heading,
   Kbd,
+  Center,
 } from "@chakra-ui/react";
+import { FaGithub } from "react-icons/fa";
 import {
   queryOptions,
   useQueries,
@@ -202,6 +205,18 @@ export function App() {
             </Box>
           </Card.Body>
         </Card.Root>
+        <Box padding={2}>
+          <Center>
+            <Link
+              href="https://github.com/Respheal/crabigator-snacks"
+              title="View on Github"
+            >
+              <Icon size="lg">
+                <FaGithub />
+              </Icon>
+            </Link>
+          </Center>
+        </Box>
       </Stack>
     </AbsoluteCenter>
   );
