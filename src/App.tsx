@@ -25,7 +25,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import type { AssignmentCollection, Subject } from "./interfaces";
+import type { Assignment, AssignmentCollection, Subject } from "./interfaces";
 import { Flashcards } from "./Flashcards";
 
 export function App() {
@@ -37,7 +37,11 @@ export function App() {
   const [debouncedBatch, setDebouncedBatch] = useState(batchSize); // debouncer for batch size
   const [submitted, setSubmitted] = useState(false); // wait for submit button before fetching data
   const { data: assignments, error } = useQuery(assignmentOptions(apiKey));
-  const assignmentBatch = assignments?.data.slice(0, Number(debouncedBatch)) ?? [];
+  const [seed] = useState(() => Math.random());
+  const assignmentBatch = randomizeAssignments(
+    assignments?.data ?? [],
+    Number(debouncedBatch),
+  );
   const [completedSubjects, setCompletedSubjects] = useState<number[]>([]);
 
   // Wait a sec before updating the batch size
@@ -60,6 +64,15 @@ export function App() {
 
     return () => clearTimeout(timer);
   }, [completedSubjects, batchSize]);
+
+  function randomizeAssignments(assignments: Assignment[], x: number) {
+    const shuffled = [...assignments];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(seed * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, x);
+  }
 
   // Query functions
 
