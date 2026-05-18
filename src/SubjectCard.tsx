@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { mutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as wanakana from "wanakana";
+
 import { Toaster, toaster } from "./components/ui/toaster";
 import type { GradedReview, Subject, SubjectGrade } from "./interfaces";
 
@@ -178,6 +179,7 @@ export function SubjectCard({
         title: `Submitted review for ${subject.data.characters}`,
         description: `Incorrect Meanings: ${incorrectMeaningCount}, Incorrect Readings: ${incorrectReadingCount}`,
         type: "info",
+        closable: true,
       });
     },
     onError: (error) => {
@@ -185,6 +187,7 @@ export function SubjectCard({
         title: "Error submitting review",
         description: (error as Error).message,
         type: "error",
+        closable: true,
       });
     },
   });
@@ -209,7 +212,7 @@ export function SubjectCard({
         ...prev,
         [subject.id]: { ...prev[subject.id], correct_meaning: true },
       }));
-      toaster.create({ description: `Correct!`, type: "success" });
+      toaster.create({ description: `Correct!`, type: "success", closable: true });
     } else {
       // If the answer is not correct, increment the incorrect meaning count for this subject
       setGrades((prev) => ({
@@ -223,6 +226,7 @@ export function SubjectCard({
       toaster.create({
         description: `Incorrect Meaning. Total Incorrect Meanings: ${(grades[subject.id]?.incorrect_meaning_answers ?? 0) + 1}`,
         type: "error",
+        closable: true,
       });
     }
   }
@@ -240,7 +244,7 @@ export function SubjectCard({
         ...prev,
         [subject.id]: { ...prev[subject.id], correct_reading: true },
       }));
-      toaster.create({ description: `Correct!`, type: "success" });
+      toaster.create({ description: `Correct!`, type: "success", closable: true });
     } else {
       setGrades((prev) => ({
         ...prev,
@@ -253,6 +257,7 @@ export function SubjectCard({
       toaster.create({
         description: `Incorrect Reading. Total Incorrect Readings: ${(grades[subject.id]?.incorrect_reading_answers ?? 0) + 1}`,
         type: "error",
+        closable: true,
       });
     }
   }

@@ -1,10 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { Provider } from "./components/ui/provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { App } from "./App.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+import { Provider } from "./components/ui/provider";
 import { ColorModeButton } from "./components/ui/color-mode.tsx";
+import { App } from "./App.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {

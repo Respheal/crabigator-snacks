@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Text, Stack, Card, Separator, SimpleGrid } from "@chakra-ui/react";
+
 import type { Subject, SubjectGrade } from "./interfaces";
 import { SubjectCard } from "./SubjectCard";
 
